@@ -1,8 +1,8 @@
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
-import { getMealDetails } from "./services/recipeAPI";
-import { Meal } from "./types/Recipe";
+import { getMealDetails } from "../services/recipeAPI";
+import { Meal } from "../types/Recipe";
 
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
