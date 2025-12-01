@@ -8,9 +8,12 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Meal[]>([]);
   const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const handleSearch = async () => {
-    if (!query.trim()) return;
+  if (!query.trim()) return;
+
+    setHasSearched(true);
 
     try {
       setLoading(true);
@@ -58,7 +61,7 @@ export default function App() {
         )}
       />
 
-      {!loading && results.length === 0 && query !== "" && (
+      {!loading && hasSearched && results.length === 0 && (
         <Text>Nenhuma receita encontrada.</Text>
       )}
 
