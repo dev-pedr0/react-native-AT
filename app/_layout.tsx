@@ -3,6 +3,36 @@ import React from 'react';
 
 export default function App() {
   return (
-    <Stack/>
+    <Stack>
+      {/* Página principal */}
+      <Stack.Screen
+        name="screens/search"
+        options={{
+          title: "Buscar Receitas",
+          headerStyle: { backgroundColor: "#E63946" },
+          headerTintColor: "#fff",
+          headerTitleAlign: "center",
+          headerTitleStyle: {
+            fontSize: 24,
+            fontWeight: "bold",
+          },
+        }}
+      />
+
+      {/* Página de detalhes */}
+      <Stack.Screen
+        name="screens/details"
+        options={{
+          title: "Detalhes da Receita",
+          headerStyle: { backgroundColor: "#E63946" },
+          headerTintColor: "#fff",
+          headerTitleAlign: "center",
+          headerTitleStyle: {
+            fontSize: 24,
+            fontWeight: "bold",
+          },
+        }}
+      />
+    </Stack>
   );
 }
