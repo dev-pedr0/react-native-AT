@@ -1,7 +1,7 @@
 import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Button, FlatList, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Button, FlatList, Image, Pressable, Text, TextInput, View } from "react-native";
 import { filterByCategory, getCategories, searchMeals } from "../services/recipeAPI";
 import { Meal } from "../types/Recipe";
 
@@ -99,16 +99,13 @@ export default function App() {
         data={results}
         keyExtractor={(item) => item.idMeal}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => openDetails(item.idMeal)}
-          >
+          <Pressable onPress={() => openDetails(item.idMeal)}>
             <Image
               style={{ width: "100%", height: 180, borderRadius: 8 }}
               source={{ uri: item.strMealThumb }}
             />
-
             <Text>{item.strMeal}</Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
       />
 
