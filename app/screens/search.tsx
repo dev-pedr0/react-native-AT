@@ -12,20 +12,29 @@ export default function App() {
   const [hasSearched, setHasSearched] = useState(false);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
   useEffect(() => {
     const loadCategories = async () => {
       const data = await getCategories();
       setCategories(["All", ...data]);
+      setSelectedCategory("Pasta");
     };
 
     loadCategories();
   }, []);
 
+  useEffect(() => {
+  if (categories.length > 0 && !initialLoadDone) {
+    setInitialLoadDone(true);
+    handleSearch();
+  }
+}, [categories]);
+
   const handleSearch = async () => {
     const isAllCategory = selectedCategory === "All";
 
-    if (!query.trim() && !selectedCategory) return;
+    if (!query.trim() && isAllCategory) return;
 
     setHasSearched(true);
 
