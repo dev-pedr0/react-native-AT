@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { getMealDetails } from "../services/recipeAPI";
 import { Meal } from "../types/Recipe";
 
@@ -8,6 +8,7 @@ export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
   const [meal, setMeal] = useState<Meal | null>(null);
 
+  // Carrega informções da receita ao carregar a tela
   useEffect(() => {
     async function load() {
       const data = await getMealDetails(String(id));
@@ -16,6 +17,7 @@ export default function DetailsScreen() {
     load();
   }, []);
 
+  // Pega da API informações dos ingredientes e da medidasde cada um
   function getIngredientsList(meal: Meal) {
     const ingredients = [];
 
@@ -31,6 +33,7 @@ export default function DetailsScreen() {
     return ingredients;
   }
 
+  // Se a receita não estiver carregada mostra simbolo de carregamento
   if (!meal) {
     return (
       <View>
@@ -39,44 +42,117 @@ export default function DetailsScreen() {
     );
   }
 
+  // vairável com informações dos ingredientes
   const ingredients = getIngredientsList(meal);
 
   return (
     <ScrollView>
-      
-      <Image
-        source={{ uri: meal.strMealThumb }}
-        style={{
-          width: "100%",
-          height: 250,
-        }}
-      />
+      <View style={styles.container}>
+        <Image
+          source={{ uri: meal.strMealThumb }}
+          style={styles.image}
+        />
 
-      <Text>
-        {meal.strMeal}
-      </Text>
-
-      <Text>
-        {meal.strCategory} • {meal.strArea}
-      </Text>
-
-      <Text >
-        Ingredientes
-      </Text>
-
-      {ingredients.map((item, index) => (
-        <Text key={index}>
-          • {item.ingredient} — {item.measure}
+        <Text style={styles.recipeName}>
+          {meal.strMeal}
         </Text>
-      ))}
 
-      <Text>
-        Instruções
-      </Text>
+        <Text style={styles.recipeCategory}>
+          {meal.strCategory} • {meal.strArea}
+        </Text>
 
-      <Text>
-        {meal.strInstructions}
-      </Text>
+
+        <View style={styles.marginContainer}>
+          <Text style={styles.title}>
+            Ingredientes:
+          </Text>
+
+          <View style={styles.ingredientsList}>
+            {ingredients.map((item, index) => (
+              <Text key={index} style={styles.ingredient}>
+                • {item.ingredient} — {item.measure}
+              </Text>
+            ))}
+          </View>
+        </View>
+        
+        <View style={styles.marginContainer}>
+          <Text style={styles.title}>
+            Instruções:
+          </Text>
+
+          <Text style={styles.instructions}>
+            {meal.strInstructions}
+          </Text>
+        </View>
+      </View>     
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    gap: 20,
+    backgroundColor: "#EDE0D4",
+    paddingBottom: 15,
+  },
+  image: {
+    width: "100%",
+    aspectRatio: 1,
+  },
+  recipeName: {
+    textAlign: "center",
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#eee",
+    textShadowColor: "#000000",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  recipeCategory: {
+    color: "#eee",
+    textShadowColor: "#000000",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+  },
+  marginContainer: {
+    marginLeft: 20,
+    marginRight: 10,
+  },
+  title: {
+    color: "#eee",
+    textShadowColor: "#000000",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    fontSize: 16,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+  },
+  ingredientsList: {
+    marginLeft: 20,
+  },
+  ingredient: {
+    color: "#eee",
+    textShadowColor: "#000000",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    fontSize: 14,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+  },
+
+  instructions: {
+    marginLeft: 20,
+    color: "#eee",
+    textShadowColor: "#000000",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    fontSize: 14,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+  },
+});
