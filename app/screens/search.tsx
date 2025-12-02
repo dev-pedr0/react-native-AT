@@ -81,7 +81,7 @@ export default function App() {
 
       {/* Seletor de categorias */}
       <View style={styles.pickerContainer}>
-        <Text>Categorias:</Text>
+        <Text style={styles.categoriesTitle}>Categorias:</Text>
         <Picker
           selectedValue={selectedCategory}
           onValueChange={(value) => setSelectedCategory(value)}
@@ -109,6 +109,7 @@ export default function App() {
         </View>
       )}
 
+      {/* Lista de Receitas */} 
       {!loading && (
         <Text style={styles.title}>Receita(s)</Text>
       )}
@@ -117,12 +118,12 @@ export default function App() {
         data={results}
         keyExtractor={(item) => item.idMeal}
         renderItem={({ item }) => (
-          <Pressable onPress={() => openDetails(item.idMeal)}>
+          <Pressable onPress={() => openDetails(item.idMeal)} style={styles.listContainer}>
             <Image
-              style={{ width: "100%", height: 180, borderRadius: 8 }}
+              style={styles.image}
               source={{ uri: item.strMealThumb }}
             />
-            <Text>{item.strMeal}</Text>
+            <Text style={styles.recipeName}>{item.strMeal}</Text>
           </Pressable>
         )}
       />
@@ -141,14 +142,25 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#EDE0D4",
   },
+  categoriesTitle: {
+    color: "#eee",
+    textShadowColor: "#000000",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    fontSize: 16,
+  },
   pickerContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
   },
   picker: {
-    backgroundColor: "#eee",
+    backgroundColor: "#E63946",
     marginVertical: 10,
+    color: "#eee",
+    textShadowColor: "#000000",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   input: {
     marginBottom: 5,
@@ -170,5 +182,24 @@ const styles = StyleSheet.create({
     textShadowColor: "#000000",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
+  },
+  listContainer: {
+    alignItems: "center",
+    gap: 5,
+    marginBottom: 25,
+  },
+  image: {
+    width: "80%",
+    aspectRatio: 1,
+    borderRadius: 20,
+  },
+  recipeName: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#eee",
+    textShadowColor: "#000000",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+
   },
 });
