@@ -1,7 +1,7 @@
 import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Button, FlatList, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Button, FlatList, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { filterByCategory, getCategories, searchMeals } from "../services/recipeAPI";
 import { Meal } from "../types/Recipe";
 
@@ -72,7 +72,7 @@ export default function App() {
   };
 
   return (
-    <View style={{ padding: 20, marginTop: 80 }}>
+    <View style={{ flex: 1, padding: 20, marginTop: 80 }}>
       <Picker
         selectedValue={selectedCategory}
         onValueChange={(value) => setSelectedCategory(value)}
@@ -90,9 +90,12 @@ export default function App() {
       />
       <Button title="Buscar" onPress={handleSearch} />
 
-      {loading && <Text>Carregando...</Text>}
+      {loading && (
+        <ActivityIndicator size="large" color="#000"/>
+      )}
 
       <FlatList
+        style={{ flex: 1 }}
         data={results}
         keyExtractor={(item) => item.idMeal}
         renderItem={({ item }) => (
@@ -100,6 +103,7 @@ export default function App() {
             onPress={() => openDetails(item.idMeal)}
           >
             <Image
+              style={{ width: "100%", height: 180, borderRadius: 8 }}
               source={{ uri: item.strMealThumb }}
             />
 
