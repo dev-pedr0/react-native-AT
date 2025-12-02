@@ -1,7 +1,7 @@
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, FlatList, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { searchMeals } from "../services/recipeAPI";
+import { filterByCategory, getCategories, searchMeals } from "../services/recipeAPI";
 import { Meal } from "../types/Recipe";
 
 export default function App() {
@@ -9,15 +9,37 @@ export default function App() {
   const [results, setResults] = useState<Meal[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      const data = await getCategories();
+      setCategories(data);
+    };
+
+    loadCategories();
+  }, []);
 
   const handleSearch = async () => {
-  if (!query.trim()) return;
+    if (!query.trim() && !selectedCategory) return;
 
     setHasSearched(true);
 
     try {
       setLoading(true);
-      const data = await searchMeals(query);
+      let data: Meal[] = [];
+      if (selectedCategory) {
+        data = await filterByCategory(selectedCategory);
+      }
+      if (query.trim() && !selectedCategory) {
+        data = await searchMeals(query);
+      }
+      if (query.trim() && selectedCategory) {
+        data = data.filter((meal) =>
+          meal.strMeal.toLowerCase().includes(query.toLowerCase())
+        );
+      }
       setResults(data);
     } catch (error) {
       console.log(error);
@@ -36,6 +58,25 @@ export default function App() {
 
   return (
     <View style={{ padding: 20, marginTop: 80 }}>
+      <FlatList
+        data={categories}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item) => item}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={{
+              padding: 10,
+              borderRadius: 8,
+              marginRight: 10,
+              backgroundColor: selectedCategory === item ? "orange" : "#ddd",
+            }}
+            onPress={() => setSelectedCategory(item)}
+          >
+            <Text>{item}</Text>
+          </TouchableOpacity>
+  )}
+      />
       <TextInput
         placeholder="Digite o nome de uma receita..."
         value={query}

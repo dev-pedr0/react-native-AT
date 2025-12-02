@@ -16,3 +16,15 @@ export async function getMealDetails(id: string): Promise<Meal | null> {
   const response = await axios.get(url);
   return response.data.meals?.[0] || null;
 }
+
+export async function getCategories(): Promise<string[]> {
+  const url = `${API_BASE}/categories.php`;
+  const response = await axios.get(url);
+  return response.data.categories.map((c: any) => c.strCategory);
+}
+
+export async function filterByCategory(category: string): Promise<Meal[]> {
+  const url = `${API_BASE}/filter.php?c=${category}`;
+  const response = await axios.get(url);
+  return response.data.meals || [];
+}
