@@ -1,7 +1,7 @@
 import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Button, FlatList, Image, Pressable, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Button, FlatList, Image, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { filterByCategory, getCategories, searchMeals } from "../services/recipeAPI";
 import { Meal } from "../types/Recipe";
 
@@ -14,6 +14,7 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [initialLoadDone, setInitialLoadDone] = useState(false);
 
+  // Carrega todas as categorias
   useEffect(() => {
     const loadCategories = async () => {
       const data = await getCategories();
@@ -24,13 +25,15 @@ export default function App() {
     loadCategories();
   }, []);
 
+  // Faz a primeira e automática busca na página através da categoria pasta
   useEffect(() => {
-  if (categories.length > 0 && !initialLoadDone) {
-    setInitialLoadDone(true);
-    handleSearch();
-  }
-}, [categories]);
+    if (categories.length > 0 && !initialLoadDone) {
+      setInitialLoadDone(true);
+      handleSearch();
+    }
+  }, [categories]);
 
+  // Gerencia e realiza a pesquisa das receitas
   const handleSearch = async () => {
     const isAllCategory = selectedCategory === "All";
 
@@ -40,6 +43,7 @@ export default function App() {
 
     try {
       setLoading(true);
+      setResults([]);
       let data: Meal[] = [];
 
       if (!isAllCategory) {
@@ -64,6 +68,7 @@ export default function App() {
     }
   };
 
+  // Navega para a página de detalhes da receita
   const openDetails = (id: string) => {
     router.push({
       pathname: "/screens/details",
@@ -72,28 +77,41 @@ export default function App() {
   };
 
   return (
-    <View style={{ flex: 1, padding: 20, marginTop: 80 }}>
-      <Picker
-        selectedValue={selectedCategory}
-        onValueChange={(value) => setSelectedCategory(value)}
-        style={{ backgroundColor: "#eee", marginVertical: 10 }}
-      >
-        {categories.map((cat) => (
-          <Picker.Item key={cat} label={cat} value={cat} />
-        ))}
-      </Picker>
+    <View style={styles.container}>
+
+      {/* Seletor de categorias */}
+      <View style={styles.pickerContainer}>
+        <Text>Categorias:</Text>
+        <Picker
+          selectedValue={selectedCategory}
+          onValueChange={(value) => setSelectedCategory(value)}
+          style={styles.picker}
+        >
+          {categories.map((cat) => (
+            <Picker.Item key={cat} label={cat} value={cat} />
+          ))}
+        </Picker>
+      </View>
       
+      {/* Input de texto e botão de pesquisa */}
       <TextInput
         placeholder="Digite o nome de uma receita..."
         value={query}
         onChangeText={setQuery}
+        style={styles.input}
       />
-      <Button title="Buscar" onPress={handleSearch} />
+      <Button title="Buscar" onPress={handleSearch} color={"#E63946"} />
 
+      {/* Elemento de carregamento */}  
       {loading && (
-        <ActivityIndicator size="large" color="#000"/>
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color="#E63946" />
+        </View>
       )}
 
+      {!loading && (
+        <Text style={styles.title}>Receita(s)</Text>
+      )}
       <FlatList
         style={{ flex: 1 }}
         data={results}
@@ -116,3 +134,41 @@ export default function App() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#EDE0D4",
+  },
+  pickerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  picker: {
+    backgroundColor: "#eee",
+    marginVertical: 10,
+  },
+  input: {
+    marginBottom: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E63946",
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginTop: 15,
+    marginBottom: 5,
+    textAlign: "center",
+    color: "#eee",
+    textShadowColor: "#000000",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+});
