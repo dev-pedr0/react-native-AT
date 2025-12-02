@@ -1,3 +1,4 @@
+import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Button, FlatList, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -15,13 +16,15 @@ export default function App() {
   useEffect(() => {
     const loadCategories = async () => {
       const data = await getCategories();
-      setCategories(data);
+      setCategories(["All", ...data]);
     };
 
     loadCategories();
   }, []);
 
   const handleSearch = async () => {
+    const isAllCategory = selectedCategory === "All";
+
     if (!query.trim() && !selectedCategory) return;
 
     setHasSearched(true);
@@ -29,13 +32,16 @@ export default function App() {
     try {
       setLoading(true);
       let data: Meal[] = [];
-      if (selectedCategory) {
+
+      if (!isAllCategory) {
         data = await filterByCategory(selectedCategory);
       }
-      if (query.trim() && !selectedCategory) {
+
+      if (query.trim() && isAllCategory) {
         data = await searchMeals(query);
       }
-      if (query.trim() && selectedCategory) {
+
+      if (query.trim() && !isAllCategory) {
         data = data.filter((meal) =>
           meal.strMeal.toLowerCase().includes(query.toLowerCase())
         );
@@ -58,25 +64,16 @@ export default function App() {
 
   return (
     <View style={{ padding: 20, marginTop: 80 }}>
-      <FlatList
-        data={categories}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={{
-              padding: 10,
-              borderRadius: 8,
-              marginRight: 10,
-              backgroundColor: selectedCategory === item ? "orange" : "#ddd",
-            }}
-            onPress={() => setSelectedCategory(item)}
-          >
-            <Text>{item}</Text>
-          </TouchableOpacity>
-  )}
-      />
+      <Picker
+        selectedValue={selectedCategory}
+        onValueChange={(value) => setSelectedCategory(value)}
+        style={{ backgroundColor: "#eee", marginVertical: 10 }}
+      >
+        {categories.map((cat) => (
+          <Picker.Item key={cat} label={cat} value={cat} />
+        ))}
+      </Picker>
+      
       <TextInput
         placeholder="Digite o nome de uma receita..."
         value={query}
