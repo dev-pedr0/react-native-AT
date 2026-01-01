@@ -28,3 +28,9 @@ export async function filterByCategory(category: string): Promise<Meal[]> {
   const response = await axios.get(url);
   return response.data.meals || [];
 }
+
+export async function getRandomMeal(): Promise<Meal | null> {
+  const url = `${API_BASE}/random.php`;
+  const response = await axios.get(url);
+  return response.data.meals?.[0] || null;
+}

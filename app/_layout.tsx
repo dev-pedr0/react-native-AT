@@ -4,6 +4,21 @@ import React from 'react';
 export default function App() {
   return (
     <Stack>
+      {/* Tela inicial */}
+      <Stack.Screen
+        name="screens/home"
+        options={{
+          title: "Aplicativo de Receitas",
+          headerStyle: { backgroundColor: "#E63946" },
+          headerTintColor: "#fff",
+          headerTitleAlign: "center",
+          headerTitleStyle: {
+            fontSize: 24,
+            fontWeight: "bold",
+          },
+        }}
+      />
+
       {/* Página principal */}
       <Stack.Screen
         name="screens/search"
